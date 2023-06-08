@@ -610,41 +610,44 @@ function initGL() {
     const vs = `#version 300 es
         in highp vec4 in_pos;
         uniform mat4 MatrWVP;
+        out highp vec4 v_color;
         
         void main() {
             gl_Position = MatrWVP * in_pos;
+            v_color = vec4((in_pos.x + 1.0) / 2.0, (in_pos.y + 1.0) / 2.0, (in_pos.z + 1.0) / 2.0, 1);
         }
     `;
 
     const fs = `#version 300 es
+        in highp vec4 v_color;
         out highp vec4 o_color;
-
         void main() {
-         o_color = vec4(1, 1, 0, 1);
+         o_color = v_color;
         }
     `;
 
     const pos = [-1, 1, -1, 1,   1, 1, -1, 1,    1, -1, -1, 1,    -1, -1, -1, 1,
                  -1, 1, 1, 1,   1, 1, 1, 1,      1, -1, 1, 1,    -1, -1, 1, 1];
-                 const ind = [
-                    0, 1, 2,
-                    0, 2, 3,
-                    2, 1, 5,
-                    2, 5, 6,
-                    3, 2, 6,
-                    3, 6, 7,
-                    0, 3, 7,
-                    0, 7, 4,
-                    1, 0, 4,
-                    1, 4, 5,
-                    6, 5, 4,
-                    6, 4, 7];
+    const ind = [
+         0, 1, 2,
+         0, 2, 3,
+         2, 1, 5,
+         2, 5, 6,
+         3, 2, 6,
+         3, 6, 7,
+         0, 3, 7,
+         0, 7, 4,
+         1, 0, 4,
+         1, 4, 5,
+         6, 5, 4,
+         6, 4, 7];
     let obj = new PRIM(gl, pos, ind, 8, 36, gl.TRIANGLE_STRIP, mat4().setIdentity(), vs, fs);
     obj.prepare();
 
     const drawLoop = () => {
        gl.clearColor(0.6, 0.1, 1, 1);
        gl.clear(gl.COLOR_BUFFER_BIT);
+       gl.enable(gl.DEPTH_TEST);
 
        let x = Date.now() / 10000;
        obj.draw(mat4().setRotate(Math.sin(x) * 10, vec3().set(0, 1, 1)), camera());
