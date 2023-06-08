@@ -1,0 +1,79 @@
+body{
+    margin: 0px;
+    padding: 0px;
+    background: linear-gradient(#282F45, #040C25);
+    cursor: default;
+}
+.body{
+    min-height: 100vh;
+}
+.title{
+    height: 7vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.header{
+    height: 7vh;
+    background: linear-gradient(#3E7352, #000000);
+    display: flex;
+    justify-content: center;
+}
+.logo{
+    color: aliceblue;
+    font-size: 30px;
+}
+.block-logo{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    width: 5%;
+    justify-content: center;
+}
+.block-other{
+    height: 100%;
+    display: flex;
+    align-items: center;
+    width: 95%;
+    justify-content: space-around;
+}
+#butChange{
+    background: linear-gradient(orange, red);
+    padding: 15px;
+    color: aliceblue;
+    border: none;
+    border-radius: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+#sliderValue{
+    color: aliceblue;
+    margin-left: 10px;
+    font-size: 25px;
+}
+#butChange:hover{
+    border-radius: 15px;
+}
+.text{
+    font-size: 50px;
+    color: crimson;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-style: normal;
+}
+.text:hover{
+    font-style: italic;
+}
+.main-block{
+    height: 86vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#glCanvas{
+    border-radius: 3%;
+    box-shadow: none;
+}
+#glCanvas:hover{
+    box-shadow: 10px 5px 5px darkslategray;
+}

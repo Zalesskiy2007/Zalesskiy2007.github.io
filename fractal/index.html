@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Fractal</title>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="style.css" type="text/css"/>
+    </head>
+    <body>
+        <div class="body">
+            <div class="header">
+                <div class="block-logo"> <span class="logo">MZ2</span></div>
+                <form action="http://localhost:8000" method="get"></form>
+                    <div class="block-other">
+                        <div><input type="range" min="1" max="20" step="0.1" id="slider"/><span id="sliderValue">Value</span></div>
+                        <button id="butChange" onclick="myHandle(this);" onkeyup="this.style.padding = '5px';">CHANGE</button>
+                    </div>
+                </form>
+            </div>
+            <div class="title"><span class="text" id="txt">Mandelbrot</span></div> 
+            <div class="main-block">
+                <canvas id="glCanvas" width="800px" height="800px"></canvas>
+            </div>
+        </div>
+        <script src="main.js"></script>
+    </body>
+</html>
