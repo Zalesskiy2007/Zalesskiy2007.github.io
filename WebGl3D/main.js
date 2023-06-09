@@ -520,7 +520,6 @@ function camera(...args) {
 
 
 
-
 function loadShader(gl, type, source) {
     const shader = gl.createShader(type);
 
@@ -534,6 +533,9 @@ function loadShader(gl, type, source) {
     return shader;
 }
 
+
+
+
 class PRIM {
     constructor(gl, V, Ind, NoofV, NoofI, type, trans, vs, fs) {
         this.gl = gl;
@@ -545,6 +547,9 @@ class PRIM {
         this.vs = vs;
         this.fs = fs;
         this.Trans = trans;
+        this.vertexType = "xyzwrgba";
+        this.vertexSize = this.vertexType.length;
+        this.vertexSizeInBytes = this.vertexSize * 4;
     }
 
    prepare() {
@@ -560,12 +565,19 @@ class PRIM {
     }
 
     const posLoc = this.gl.getAttribLocation(this.program, "in_pos");
+    const posCol = this.gl.getAttribLocation(this.program, "in_col");
     const posBuf = this.gl.createBuffer();
+    this.VA = this.gl.createVertexArray();
 
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, posBuf);
     this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.V), this.gl.STATIC_DRAW);
-    this.gl.vertexAttribPointer(posLoc, 4, this.gl.FLOAT, false, 0, 0);
+
+    this.gl.bindVertexArray(this.VA);
+    this.gl.vertexAttribPointer(posLoc, 4, this.gl.FLOAT, false, this.vertexSizeInBytes, 0);
+    this.gl.vertexAttribPointer(posCol, 4, this.gl.FLOAT, false, this.vertexSizeInBytes, 16);
     this.gl.enableVertexAttribArray(posLoc);
+    this.gl.enableVertexAttribArray(posCol);
+    this.gl.bindVertexArray(null);
 
     if (this.Ind !== null && this.NoofI !== 0) {
         this.iBuf = this.gl.createBuffer();
@@ -589,6 +601,7 @@ class PRIM {
     let posWVP = this.gl.getUniformLocation(this.program, "MatrWVP");
 
     this.gl.useProgram(this.program);
+    this.gl.bindVertexArray(this.VA);
 
     if (posWVP !== null)
         this.gl.uniformMatrix4fv(posWVP, false, new Float32Array(wvp.toArray()));
@@ -600,8 +613,13 @@ class PRIM {
     } else {
         this.gl.drawArrays(this.type, 0, this.NumOfI);
     }
+
+    this.gl.bindVertexArray(null);
    }
 }
+
+
+
 
 function initGL() {
     const canvas = document.getElementById("glCanvas");
@@ -609,12 +627,13 @@ function initGL() {
 
     const vs = `#version 300 es
         in highp vec4 in_pos;
+        in highp vec4 in_col;
         uniform mat4 MatrWVP;
         out highp vec4 v_color;
         
         void main() {
             gl_Position = MatrWVP * in_pos;
-            v_color = vec4((in_pos.x + 1.0) / 2.0, (in_pos.y + 1.0) / 2.0, (in_pos.z + 1.0) / 2.0, 1);
+            v_color = in_col;
         }
     `;
 
@@ -626,8 +645,17 @@ function initGL() {
         }
     `;
 
-    const pos = [-1, 1, -1, 1,   1, 1, -1, 1,    1, -1, -1, 1,    -1, -1, -1, 1,
-                 -1, 1, 1, 1,   1, 1, 1, 1,      1, -1, 1, 1,    -1, -1, 1, 1];
+    const pos = [//           Position            Color
+                            -1, 1, -1,  1,        1, 1, 1, 1,
+                            1, 1, -1,   1,        1, 0, 1, 1,
+                            1, -1, -1,  1,        1, 0, 0, 1,
+                            -1, -1, -1, 1,        0, 1, 1, 1,
+                            -1, 1, 1,   1,        0, 0, 1, 1,
+                            1, 1, 1,    1,        0, 0, 0, 1,
+                            1, -1, 1,   1,        1, 1, 0, 1,
+                            -1, -1, 1,  1,        0, 1, 0, 1,
+    ];
+
     const ind = [
          0, 1, 2,
          0, 2, 3,
@@ -659,6 +687,5 @@ function initGL() {
 }
 
 window.addEventListener("load", () => {      
-            initGL();
-        }
-);
+  initGL();
+});
