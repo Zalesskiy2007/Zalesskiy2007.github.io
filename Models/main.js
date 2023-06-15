@@ -547,7 +547,7 @@ class PRIM {
         this.vs = vs;
         this.fs = fs;
         this.Trans = trans;
-        this.vertexType = "xyzwrgba";
+        this.vertexType = "xyzwrgbannnn";
         this.vertexSize = this.vertexType.length;
         this.vertexSizeInBytes = this.vertexSize * 4;
     }
@@ -566,6 +566,7 @@ class PRIM {
 
     const posLoc = this.gl.getAttribLocation(this.program, "in_pos");
     const posCol = this.gl.getAttribLocation(this.program, "in_col");
+    const posNorm = this.gl.getAttribLocation(this.program, "in_norm");
     const posBuf = this.gl.createBuffer();
     this.VA = this.gl.createVertexArray();
 
@@ -575,8 +576,10 @@ class PRIM {
     this.gl.bindVertexArray(this.VA);
     this.gl.vertexAttribPointer(posLoc, 4, this.gl.FLOAT, false, this.vertexSizeInBytes, 0);
     this.gl.vertexAttribPointer(posCol, 4, this.gl.FLOAT, false, this.vertexSizeInBytes, 16);
+    this.gl.vertexAttribPointer(posNorm, 4, this.gl.FLOAT, false, this.vertexSizeInBytes, 32);
     this.gl.enableVertexAttribArray(posLoc);
     this.gl.enableVertexAttribArray(posCol);
+    this.gl.enableVertexAttribArray(posNorm);
     this.gl.bindVertexArray(null);
 
     if (this.Ind !== null && this.NoofI !== 0) {
@@ -599,12 +602,18 @@ class PRIM {
     let wvp = w.mul(cam.matrVP);
 
     let posWVP = this.gl.getUniformLocation(this.program, "MatrWVP");
+    let posTimer = this.gl.getUniformLocation(this.program, "Timer");
 
     this.gl.useProgram(this.program);
     this.gl.bindVertexArray(this.VA);
 
     if (posWVP !== null)
         this.gl.uniformMatrix4fv(posWVP, false, new Float32Array(wvp.toArray()));
+    if (posTimer !== null) {
+        let x = Date.now() / 300;
+
+        this.gl.uniform1f(posTimer, (Math.sin(x) + 1) / 2);
+    }
 
     if (this.iBuf !== -1) {
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.iBuf);
@@ -634,6 +643,7 @@ function loadModel(fn) {
   let res = [[], []];
   let NumV = 0;
   let NumF = 0;
+  let NumN = 0;
 
   let txt = prom.split('\n');
   for (let i = 0; i < txt.length; i++) {
@@ -649,13 +659,14 @@ function loadModel(fn) {
       res[0].push(+txt[x + 3]);
       res[0].push(1);
 
-      NumV += 3;
+      NumV += 1;
        
       //Color
       res[0].push(Math.random());
       res[0].push(Math.random());
       res[0].push(Math.random());
       res[0].push(1);
+
     } else if (txt[x] === 'f') {
       let a;
 
@@ -667,11 +678,15 @@ function loadModel(fn) {
       res[1].push((+a) - 1);
 
       NumF += 3;
+    } else if (txt[x] === 'vn') {
+      NumN += 1;
+      res[0].splice(NumN * 8 + (NumN - 1) * 4, 0, +txt[x + 1], +txt[x + 2], +txt[x + 3], 1);
     }
   }
 
   res.push(NumV);
   res.push(NumF);
+  res.push(NumN);
   return res;
 }
 
@@ -681,22 +696,50 @@ function initGL() {
     const gl = canvas.getContext("webgl2");
 
     const vs = `#version 300 es
-        in highp vec4 in_pos;
-        in highp vec4 in_col;
+        precision highp float;
+
+        in vec4 in_pos;
+        in vec4 in_col;
+        in vec4 in_norm;
+
         uniform mat4 MatrWVP;
-        out highp vec4 v_color;
+
+        out vec4 v_color;
+        out vec4 v_norm;
+        out vec4 v_pos;
         
         void main() {
             gl_Position = MatrWVP * in_pos;
             v_color = in_col;
+            v_norm = in_norm;
+            v_pos = in_pos;
         }
     `;
 
     const fs = `#version 300 es
-        in highp vec4 v_color;
-        out highp vec4 o_color;
+        precision highp float;
+
+        in vec4 v_color;
+        in vec4 v_norm;
+        in vec4 v_pos;
+
+        out vec4 o_color;
+        uniform float Timer;
+        
+        vec3 Shade( vec3 P, vec3 N )
+        {
+          vec3 L = normalize(vec3(1, 2, 3));
+          vec3 LC = vec3(Timer, 1, Timer);
+          vec3 color = vec3(0);
+
+          color = v_color.rgb;  
+          color *= max(0.0, dot(N, L)) * LC;
+
+          return color;
+        }
+
         void main() {
-         o_color = v_color;
+         o_color = vec4(Shade(v_pos.xyz, normalize(v_norm.xyz)), v_color.a);
         }
     `;
     
@@ -12717,7 +12760,7 @@ function initGL() {
     cam.set(vec3(0, 20, 40), vec3(0, 0, 0), vec3(0, 1, 0));
 
     const drawLoop = () => {
-       gl.clearColor(0.6, 0.1, 1, 1);
+     //  gl.clearColor(0.6, 0.1, 1, 1);
        gl.clear(gl.COLOR_BUFFER_BIT);
        gl.enable(gl.DEPTH_TEST);
 
