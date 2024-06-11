@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ray marching by MZ2</title>
+        <script src="./output/main.js"></script>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="style.css" type="text/css"/>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="div-canv div-wr">
+                <canvas id="glcanvas" width="800px" height="800px"></canvas>
+            </div>  
+            <div class="div-data div-wr">
+                <div class="title block"><span class="title-text">Ray marching</span></div>
+                <div class="block control">
+                    <span class="control-text">WASD & Arrows</span>
+                </div>
+                <div class="colors">
+                   <div class="color-wrapper color1-wrapper">
+                        <div class="color-wrapper-text color1-wrapper-text">
+                            <span class="txt-c-1">Color #1</span>
+                        </div>
+
+                        <div class="color-wrapper-arr color1-wrapper-arr">
+                            <img class="arr-img" src="arr.png"/>
+                        </div>
+
+                        <div class="color-wrapper-col color1-wrapper-col">
+                            <input value="#a3b5e6" type="color" class="colorpick" id="ColorPicker1"/>
+                        </div>
+                   </div>
+                   <div class="color-wrapper color2-wrapper">
+                        <div class="color-wrapper-text color2-wrapper-text">
+                            <span class="txt-c-1">Color #2</span>
+                        </div>
+
+                        <div class="color-wrapper-arr color2-wrapper-arr">
+                            <img class="arr-img" src="arr.png"/>
+                        </div>
+
+                        <div class="color-wrapper-col color2-wrapper-col">
+                            <input value="#f0f0f0" type="color" class="colorpick" id="ColorPicker2"/>
+                        </div>
+                   </div> 
+                </div>
+            </div>          
+        </div>
+    </body>
+</html>
