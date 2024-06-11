@@ -1,0 +1,233 @@
+@font-face {
+    font-family: 'Own';
+    src: url('./fnt/pobeda-bold1.ttf');
+}
+
+body{
+    margin: 0px;
+    padding: 0px;
+
+    font-family: 'Own';
+}
+
+.wrapper{
+    width: 100vw;
+    height: 100vh;
+    background-color: #1a1d36;
+}
+
+.title-wrapper{
+    height: 8%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tap-wrapper{
+    height: 4%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.inp-wrapper{
+    width: 40%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+@keyframes inpAnim{
+    from {
+        border: 2px solid #9b59b6;
+        border-image: repeating-linear-gradient(-45deg, 
+         #9b59b6, #9b59b6 10px,
+         #b283c5 10px, #b283c5 20px);
+        border-image-slice: 10;
+      }   
+      50%{
+        border: 2px solid #bbc583;
+        border-image: repeating-linear-gradient(-45deg, 
+        #bbc583, #bbc583 10px,
+         #b69d59 10px, #b69d59 20px);
+        border-image-slice: 10;
+      } 
+    to {
+        border: 2px solid #9b59b6;
+        border-image: repeating-linear-gradient(-45deg, 
+         #9b59b6, #9b59b6 10px,
+         #b283c5 10px, #b283c5 20px);
+        border-image-slice: 10;
+    }
+}
+
+#keyInput{
+    border: 2px solid #9b59b6;
+    border-image: repeating-linear-gradient(-45deg, 
+     #9b59b6, #9b59b6 10px,
+     #b283c5 10px, #b283c5 20px);
+    border-image-slice: 10;
+
+    width: 40%;
+    height: 100%;
+    background-color: rgb(41, 46, 51);
+    color: aliceblue;
+    
+
+    font-size: min(max(16px, 1vw), 50px);
+
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-name: inpAnim;
+}
+
+.title{
+    font-size: min(max(16px, 2vw), 50px);
+    color: aliceblue;
+}
+
+@keyframes tapAnim{
+    from{
+        transform: rotate(0deg);
+    } 25% {
+        transform: rotate(27deg);
+    } 50% {
+        transform: rotate(0deg);
+    } 75% {
+        transform: rotate(-27deg);
+    } to {
+        transform: rotate(0deg);
+    }
+}
+
+.tap{
+    font-size: min(max(16px, 1vw), 50px);
+    color: #d6d6d4;
+    font-style: italic;
+    transform: rotate(45deg);
+
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+    animation-name: tapAnim;
+}
+
+a{
+    color: aliceblue;
+    text-decoration: none;
+}
+
+#root{
+    height: 88%;    
+}
+
+.div-wrapper{
+    height: 100%;   
+}
+
+.map-wrapper{
+    height: 50%;    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.display-wrapper{
+    height: 50%;    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes dataAnim{
+    from {
+        border: 10px solid #9b59b6;
+        border-image: repeating-linear-gradient(-45deg, 
+         #9b59b6, #9b59b6 10px,
+         #b283c5 10px, #b283c5 20px);
+        border-image-slice: 10;
+      }   
+      50%{
+        border: 10px solid #bbc583;
+        border-image: repeating-linear-gradient(-45deg, 
+        #bbc583, #bbc583 10px,
+        #b69d59 10px, #b69d59 20px);
+        border-image-slice: 10;
+      } 
+    to {
+        border: 10px solid #9b59b6;
+        border-image: repeating-linear-gradient(-45deg, 
+         #9b59b6, #9b59b6 10px,
+         #b283c5 10px, #b283c5 20px);
+        border-image-slice: 10;
+    }
+}
+
+.weather-data{
+    height: 80%;
+    width: 80%;    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(41, 46, 51);
+    color: aliceblue;
+
+    border: 10px solid #9b59b6;
+    border-image: repeating-linear-gradient(-45deg, 
+     #9b59b6, #9b59b6 10px,
+     #b283c5 10px, #b283c5 20px);
+    border-image-slice: 10;
+
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-name: dataAnim;
+}
+
+.ans{
+    font-size: 1.5vw;
+}
+
+#map{
+    height: 50%;
+}
+
+.table{
+    width: 80%;
+    height: 80%;
+}
+
+.tbody{
+    width: 100%;
+    height: 100%;
+}
+
+.td{
+    width: 10%;
+    text-align: center;
+    vertical-align: middle;
+    border: 3px solid #242424;
+    height: 40%;
+}
+
+.td1{
+    width: 10%;
+    background-color: #3d3d3d;
+    text-align: center;
+    vertical-align: middle;
+    border: 3px solid #242424;
+    height: 40%;
+}
+
+.td2{
+    width: 10%;
+    background-color: #5c5c5c;
+    text-align: center;
+    vertical-align: middle;
+    border: 3px solid #242424;
+    height: 40%;
+}
+
+.txtTbl{
+    font-size: 1.4vw;
+    font-size: min(max(13px, 1.4vw), 50px);
+}
