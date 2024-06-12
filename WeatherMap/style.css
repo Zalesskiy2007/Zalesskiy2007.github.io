@@ -88,28 +88,39 @@ body{
 }
 
 @keyframes tapAnim{
-    from{
+    from{        
         transform: rotate(0deg);
-    } 25% {
+    } 25% {        
         transform: rotate(27deg);
-    } 50% {
+    } 50% {        
         transform: rotate(0deg);
-    } 75% {
+    } 75% {        
         transform: rotate(-27deg);
     } to {
-        transform: rotate(0deg);
+        transform: rotate(0deg);        
+    }
+}
+
+@keyframes tapAnim2{
+    from{
+        background-position: 0% center;        
+    } to {        
+        background-position: 200% center;
     }
 }
 
 .tap{
     font-size: min(max(16px, 1vw), 50px);
-    color: #d6d6d4;
+    
+    background: linear-gradient(90deg, #e933ff, #ffb400, #ff3333, #334dff, #e933ff);
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
     font-style: italic;
     transform: rotate(45deg);
 
-    animation-duration: 4s;
-    animation-iteration-count: infinite;
-    animation-name: tapAnim;
+    animation: tapAnim 4s infinite, tapAnim2 2s infinite;
 }
 
 a{
