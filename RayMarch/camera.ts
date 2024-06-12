@@ -7,10 +7,11 @@ export class _cam {
   input: any;
   color1: _vec3;
   color2: _vec3;
+  count: number;
   
   constructor() {
     this.rot = new _vec3(0, 0, 0);
-    this.pos = new _vec3(0, 0, -5);
+    this.pos = new _vec3(0, 0, -10);
     this.input = [];
     this.input["ArrowDown"] = false;
     this.input["ArrowUp"] = false;
@@ -23,6 +24,8 @@ export class _cam {
 
     this.color1 = new _vec3(255, 0, 255);
     this.color2 = new _vec3(255, 0, 255);
+
+    this.count = 0;
   }
 
   colorResponse(){

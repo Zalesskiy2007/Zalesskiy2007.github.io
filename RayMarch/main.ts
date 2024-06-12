@@ -29,6 +29,8 @@ interface ProgramInfo {
     Color2R: any,
     Color2G: any,
     Color2B: any,
+
+    Count: any;
    },
 }
 
@@ -154,6 +156,7 @@ export async function main() {
     out vec4 o_color;
 
     uniform float Time;
+    uniform int Count;
 
     uniform float CamPosX;
     uniform float CamPosY;
@@ -190,10 +193,13 @@ export async function main() {
       return dot(n1, p) - dot(n1, q);
     }
 
-    float map_the_world_sphere(vec3 p)
+    float map_the_world_sphere(vec3 p, vec3 c, float use)
     {
         float displacement = sin(5.0 * p.x * sin(Time)) * sin(5.0 * p.y * sin(Time)) * sin(5.0 * p.z * sin(Time)) * 0.25;
-        float sphere_0 = distance_from_sphere(p, vec3(0.0) + vec3(0, 1, 0) * sin(Time) * 2.0, 1.0);
+        float sphere_0 = distance_from_sphere(p, c, 1.0);
+
+        if (use == 0.0)
+          displacement = 0.0;
 
         return sphere_0 + displacement;
     }
@@ -205,7 +211,7 @@ export async function main() {
 
     float distance_from_blend( vec3 p )
     {
-      float d1 = map_the_world_sphere(p);
+      float d1 = map_the_world_sphere(p, vec3(0.0) + vec3(0, 1, 0) * sin(Time) * 2.0, 1.0);
       float d2 = map_the_world_plane(p);
       return smin( d1, d2, 0.3);
     }
@@ -228,13 +234,13 @@ export async function main() {
         return normalize(normal);
     }
 
-    vec3 calculate_normal_sphere(vec3 p)
+    vec3 calculate_normal_sphere(vec3 p, vec3 c, float use)
     {
         const vec3 small_step = vec3(0.001, 0.0, 0.0);
 
-        float gradient_x = map_the_world_sphere(p + small_step.xyy) - map_the_world_sphere(p - small_step.xyy);
-        float gradient_y = map_the_world_sphere(p + small_step.yxy) - map_the_world_sphere(p - small_step.yxy);
-        float gradient_z = map_the_world_sphere(p + small_step.yyx) - map_the_world_sphere(p - small_step.yyx);
+        float gradient_x = map_the_world_sphere(p + small_step.xyy, c, use) - map_the_world_sphere(p - small_step.xyy, c, use);
+        float gradient_y = map_the_world_sphere(p + small_step.yxy, c, use) - map_the_world_sphere(p - small_step.yxy, c, use);
+        float gradient_z = map_the_world_sphere(p + small_step.yyx, c, use) - map_the_world_sphere(p - small_step.yyx, c, use);
 
         vec3 normal = vec3(gradient_x, gradient_y, gradient_z);
 
@@ -284,20 +290,43 @@ export async function main() {
             vec3 current_position = ro + total_distance_traveled * rd;
              
             float distance_to_closest = map_the_world_blend(current_position);
+            float type = 1.0;
+            vec3 sphPos = vec3(0.0);
+            
+            for (int i = 0; i < Count; i++)
+            {
+              vec3 d = vec3(float(i) * 2.2 - 10.0, 2.0, 2.0);
+              float ds = map_the_world_sphere(current_position, d, 0.0);
+              if (ds < distance_to_closest)
+              {
+                distance_to_closest = ds;
+                type = 2.0;
+                sphPos = d;
+              }
+            }
 
             if (distance_to_closest < MINIMUM_HIT_DISTANCE) 
             {
-                vec3 normal = calculate_normal_blend(current_position);
+              if (type == 1.0)
+              {
+                  vec3 normal = calculate_normal_blend(current_position);
 
-                float len = length(current_position.xz - vec2(0, 0));
-                vec3 color = vec3(Color1R, Color1G, Color1B);
+                  float len = length(current_position.xz - vec2(0, 0));
+                  vec3 color = vec3(Color1R, Color1G, Color1B);
 
-                float n = floor(len / 4.0);
+                  float n = floor(len / 4.0);
                 
-                if (mod(n, 2.0) == 0.0)
-                  color = vec3(Color2R, Color2G, Color2B);
+                  if (mod(n, 2.0) == 0.0)
+                    color = vec3(Color2R, Color2G, Color2B);
 
-                return Shade(current_position, normal, color);      
+                  return Shade(current_position, normal, color);      
+              }
+              else if (type == 2.0)
+              {
+                  vec3 normal = calculate_normal_sphere(current_position, sphPos, 0.0);                
+
+                  return Shade(current_position, normal, vec3(0.2, 0.6, 0.4));      
+              }
             }
 
             if (total_distance_traveled > MAXIMUM_TRACE_DISTANCE)
@@ -395,6 +424,8 @@ export async function main() {
       Color2R: gl.getUniformLocation(shaderProgram, "Color2R"),
       Color2G: gl.getUniformLocation(shaderProgram, "Color2G"),
       Color2B: gl.getUniformLocation(shaderProgram, "Color2B"),
+
+      Count: gl.getUniformLocation(shaderProgram, "Count"),
     },
   };
 
@@ -423,6 +454,8 @@ export async function main() {
     gl.uniform1f(programInfo.uniformLocations.Color2G, Camera.color2.y);
     gl.uniform1f(programInfo.uniformLocations.Color2B, Camera.color2.z);
 
+    gl.uniform1i(programInfo.uniformLocations.Count, Camera.count);
+
     drawScene(programInfo, buffers);
     window.requestAnimationFrame(draw);
   }
@@ -432,6 +465,13 @@ export async function main() {
 
 document.addEventListener('keydown', (event) => {
   Camera.input[event.code] = true;
+
+  if (Camera.input['KeyP'])
+    if (Camera.count < 10)
+      Camera.count = Camera.count + 1;
+  if (Camera.input['KeyM'])
+    if (Camera.count > 0)
+      Camera.count = Camera.count - 1;  
 });
 
 document.addEventListener('keyup', (event) => {
