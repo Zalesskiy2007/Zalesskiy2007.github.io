@@ -54,7 +54,7 @@ function App() {
                     zoom: 3
                     }}  
                     style={{width: '80%', height: '80%'}}      
-                    mapStyle="https://demotiles.maplibre.org/style.json"
+                    mapStyle="https://api.maptiler.com/maps/openstreetmap/style.json?key=wF0uF9Z2aWYMkBfbi5rd"
                 /> 
             </div>
             <div className='display-wrapper'>
